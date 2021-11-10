@@ -23,4 +23,8 @@ public class Users {
 		this.name = name;
 	}
 
+	public String getName() {
+		return this.name;
+	}
+
 }

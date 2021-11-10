@@ -9,17 +9,16 @@ import lombok.Data;
 
 @Entity
 @Data
-public class Charact implements Stats {
+public class Charact {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer id;
-	int intel;
-	int str;
-	int dex;
-	int con;
-	int health;
-	int maxHealth;
-	int speed;
+	private int intel;
+	private int str;
+	private int dex;
+	private int con;
+	private int health;
+	private int speed;
 
 	/**
 	 * @param intel
@@ -33,7 +32,12 @@ public class Charact implements Stats {
 		this.str = str;
 		this.dex = dex;
 		this.con = con;
-		this.speed = calcSpeed(this.dex);
+		calcSpeed();
+	}
+
+	public void setDex(int dex) {
+		this.dex = dex;
+		calcSpeed();
 	}
 
 	public void attack() {
@@ -44,8 +48,8 @@ public class Charact implements Stats {
 
 	}
 
-	private int calcSpeed(int a) {
-		return (int) (this.dex * 1.5f);
+	private void calcSpeed() {
+		this.speed = (int) (this.dex * 1.5f);
 	}
 
 	public boolean checkStats() {
