@@ -39,6 +39,13 @@ public class UserController {
 		return this.service.getUsers();
 	}
 
+	@GetMapping("/test")
+	public ResponseEntity<Users> test() {
+		Users testing = new Users("Jordan");
+		Users responseBody = this.service.createUsers(testing);
+		return new ResponseEntity<Users>(responseBody, HttpStatus.CONTINUE);
+	}
+
 	@PostMapping("/create")
 	public ResponseEntity<Users> createUser(@RequestBody Users newUser) {
 		Users responseBody = this.service.createUsers(newUser);
