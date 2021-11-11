@@ -38,7 +38,6 @@ public class CharactService {
 		Charact curChar = this.getCharact(id);
 		curChar.setCon(updatedCharac.getCon());
 		curChar.setDex(updatedCharac.getDex());
-		curChar.setHealth(updatedCharac.getHealth());
 		curChar.setIntel(updatedCharac.getIntel());
 		curChar.setStr(updatedCharac.getStr());
 		return this.repo.save(curChar);

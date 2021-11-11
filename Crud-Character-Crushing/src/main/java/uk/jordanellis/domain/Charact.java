@@ -86,11 +86,15 @@ public class Charact {
 		this.dmg = (int) ((int) ((this.str * 2.5f) + this.dex / 3f) * 1.5f);
 	}
 
-	public void attack() {
-
+	public void attack(Charact target) {
+		if (this.health <= 0) {
+			System.out.println("User Dead");
+		} else {
+			target.defend(this.dmg, this);
+		}
 	}
 
-	public void defend() {
+	public void defend(int damage, Charact target) {
 
 	}
 
