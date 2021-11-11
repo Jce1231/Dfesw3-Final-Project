@@ -1,7 +1,7 @@
 package uk.jordanellis.domain;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -11,6 +11,7 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import lombok.Data;
@@ -27,7 +28,12 @@ public class Users {
 
 	@OneToMany(mappedBy = "users")
 	@JsonManagedReference
-	private Set<Charact> characters = new HashSet<>();
+	private List<Charact> characters = new ArrayList<>();
+
+	@JsonIgnore
+	public List<Charact> getCharacters() {
+		return this.characters;
+	}
 
 	/**
 	 * @param name
