@@ -30,12 +30,13 @@ public class UserService {
 	}
 
 	public Users createUsers(Users newUser) {
+		System.out.println(newUser);
 		return this.repo.save(newUser);
 	}
 
 	public Users updateUsers(Integer id, Users updatedUser) {
 		Users curUser = this.getUser(id);
-		curUser.setName(curUser.getName());
+		curUser.setName(updatedUser.getName());
 		return this.repo.save(curUser);
 	}
 

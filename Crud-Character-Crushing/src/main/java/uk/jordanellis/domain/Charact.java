@@ -1,24 +1,36 @@
 package uk.jordanellis.domain;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+
+import com.fasterxml.jackson.annotation.JsonBackReference;
 
 import lombok.Data;
 
 @Entity
 @Data
+@Table(name = "charact")
 public class Charact {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Integer id;
+	@Column(name = "charact_id")
+	private int charactId;
 	private int intel;
 	private int str;
 	private int dex;
 	private int con;
 	private int health;
 	private int speed;
+	@ManyToOne
+	@JoinColumn(name = "user_id")
+	@JsonBackReference
+	private Users users;
 
 	/**
 	 * @param intel
@@ -26,13 +38,47 @@ public class Charact {
 	 * @param dex
 	 * @param con
 	 */
-	public Charact(int intel, int str, int dex, int con) {
+	public Charact(int intel, int str, int dex, int con, Users users) {
 		super();
 		this.intel = intel;
 		this.str = str;
 		this.dex = dex;
 		this.con = con;
+		this.users = users;
 		calcSpeed();
+		calcHp();
+	}
+
+	public Charact(int charactId, int intel, int str, int dex, int con, Users users) {
+		super();
+		this.charactId = charactId;
+		this.intel = intel;
+		this.str = str;
+		this.dex = dex;
+		this.con = con;
+		this.users = users;
+		calcSpeed();
+		calcHp();
+	}
+
+	public Charact() {
+		super();
+	}
+
+	public void calcHp() {
+		System.out.println(this.health);
+		this.health = (int) ((this.con * 2f) + (this.str * 1.25f)) * 10;
+		System.out.println(this.health);
+	}
+
+	public void setCon(int con) {
+		this.con = con;
+		calcHp();
+	}
+
+	public void setStr(int str) {
+		this.str = str;
+		calcHp();
 	}
 
 	public void setDex(int dex) {
@@ -59,4 +105,14 @@ public class Charact {
 			return true;
 		}
 	}
+
+	/**
+	 * @param charactId
+	 * @param intel
+	 * @param str
+	 * @param dex
+	 * @param con
+	 * @param users
+	 */
+
 }

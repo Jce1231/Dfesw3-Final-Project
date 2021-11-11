@@ -17,7 +17,7 @@ import uk.jordanellis.domain.Charact;
 import uk.jordanellis.service.CharactService;
 
 @RestController
-@RequestMapping("/character")
+@RequestMapping("/char")
 public class CharactController {
 	private CharactService service;
 
@@ -43,6 +43,11 @@ public class CharactController {
 	public ResponseEntity<Charact> createChar(@RequestBody Charact newCharact) {
 		Charact responseBody = this.service.createCharact(newCharact);
 		return new ResponseEntity<Charact>(responseBody, HttpStatus.CREATED);
+	}
+
+	@GetMapping("/test")
+	public String test() {
+		return "Hello";
 	}
 
 	@PutMapping("/update/{id}")
