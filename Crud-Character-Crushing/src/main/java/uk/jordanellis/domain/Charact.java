@@ -27,6 +27,7 @@ public class Charact {
 	private int con;
 	private int health;
 	private int speed;
+	private int dmg;
 	@ManyToOne
 	@JoinColumn(name = "user_id")
 	@JsonBackReference
@@ -40,25 +41,21 @@ public class Charact {
 	 */
 	public Charact(int intel, int str, int dex, int con, Users users) {
 		super();
-		this.intel = intel;
-		this.str = str;
-		this.dex = dex;
-		this.con = con;
+		this.setIntel(intel);
+		this.setStr(str);
+		this.setDex(dex);
+		this.setCon(con);
 		this.users = users;
-		calcSpeed();
-		calcHp();
 	}
 
 	public Charact(int charactId, int intel, int str, int dex, int con, Users users) {
 		super();
 		this.charactId = charactId;
-		this.intel = intel;
-		this.str = str;
-		this.dex = dex;
-		this.con = con;
+		this.setIntel(intel);
+		this.setStr(str);
+		this.setDex(dex);
+		this.setCon(con);
 		this.users = users;
-		calcSpeed();
-		calcHp();
 	}
 
 	public Charact() {
@@ -66,9 +63,7 @@ public class Charact {
 	}
 
 	public void calcHp() {
-		System.out.println(this.health);
 		this.health = (int) ((this.con * 2f) + (this.str * 1.25f)) * 10;
-		System.out.println(this.health);
 	}
 
 	public void setCon(int con) {
@@ -79,11 +74,16 @@ public class Charact {
 	public void setStr(int str) {
 		this.str = str;
 		calcHp();
+		calcDmg();
 	}
 
 	public void setDex(int dex) {
 		this.dex = dex;
 		calcSpeed();
+	}
+
+	public void calcDmg() {
+		this.dmg = (int) ((int) ((this.str * 2.5f) + this.dex / 3f) * 1.5f);
 	}
 
 	public void attack() {

@@ -48,4 +48,23 @@ public class CharactService {
 		this.repo.deleteById(id);
 		return !this.repo.existsById(id);
 	}
+//This was used to generate test fighters for the database, following the stat guideline
+//	public void generateCharacters() {
+//		Users systemGen = new Users(1, "System Generated");
+//		for (int i = 0; i < 1000; i++) {
+//			Random rand = new Random();
+//			Charact c = new Charact();
+//			do {
+//
+//				int rndIntel = rand.nextInt(10);
+//				int rndStr = rand.nextInt(10);
+//				int rndCon = rand.nextInt(10);
+//				int rndDex = rand.nextInt(10);
+//				c = new Charact(rndIntel, rndStr, rndDex, rndCon, systemGen);
+//			} while (!c.checkStats());
+//
+//			this.createCharact(c);
+//			System.out.println("Done :" + i);
+//		}
+//	}
 }
