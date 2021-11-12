@@ -88,14 +88,13 @@ public class Charact {
 
 	public void attack(Charact target) {
 		if (this.health <= 0) {
-			System.out.println("User Dead");
 		} else {
 			target.defend(this.dmg, this);
 		}
 	}
 
 	public void defend(int damage, Charact target) {
-
+		this.health -= damage;
 	}
 
 	private void calcSpeed() {
