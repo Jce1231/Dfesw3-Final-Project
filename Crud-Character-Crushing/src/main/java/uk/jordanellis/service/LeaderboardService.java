@@ -11,7 +11,7 @@ import uk.jordanellis.exceptions.LeaderboardNotFoundException;
 import uk.jordanellis.repo.LeaderboardRepo;
 
 @Service
-public class LeaderboardController {
+public class LeaderboardService {
 
 	private LeaderboardRepo repo;
 	@Autowired
@@ -20,7 +20,7 @@ public class LeaderboardController {
 	/**
 	 * @param repo
 	 */
-	public LeaderboardController(LeaderboardRepo repo) {
+	public LeaderboardService(LeaderboardRepo repo) {
 		super();
 		this.repo = repo;
 	}
@@ -39,7 +39,7 @@ public class LeaderboardController {
 	}
 
 	public void fightLoop() {
-		initialise();
+
 		ArrayList<Leaderboard> leaderboard = new ArrayList<>();
 		leaderboard = (ArrayList<Leaderboard>) this.repo.findAll();
 		for (int i = 0; i <= leaderboard.size() - 1; i++) {
@@ -47,32 +47,7 @@ public class LeaderboardController {
 			for (int j = i; j <= leaderboard.size() - 1; j++) {
 				if (i != j) {
 					Leaderboard defender = leaderboard.get(j);
-
-					while (fighter.getAttacker().getHealth() >= 1 && defender.getAttacker().getHealth() >= 1) {
-						if (fighter.getAttacker().getSpeed() >= defender.getAttacker().getSpeed()) {
-							fighter.getAttacker().attack(defender.getAttacker());
-							if (defender.getAttacker().getHealth() >= 1) {
-								defender.getAttacker().attack(fighter.getAttacker());
-							} else {
-							}
-						} else {
-							defender.getAttacker().attack(fighter.getAttacker());
-							if (fighter.getAttacker().getHealth() >= 1) {
-								fighter.getAttacker().attack(defender.getAttacker());
-							} else {
-							}
-						}
-					}
-					if (defender.getAttacker().getHealth() > fighter.getAttacker().getHealth()) {
-						fighter.addLoss();
-						defender.addWin();
-					} else {
-						fighter.addWin();
-						defender.addLoss();
-					}
-
-					fighter.getAttacker().calcHp();
-					defender.getAttacker().calcHp();
+					fight(fighter, defender);
 					System.out.println("Loop I: " + i + " Loop J: " + j);
 					leaderboard.set(j, defender);
 
@@ -83,4 +58,34 @@ public class LeaderboardController {
 		this.repo.saveAll(leaderboard);
 	}
 
+	public void fight(Leaderboard fighter, Leaderboard defender) {
+		if (fighter.getAttacker() == defender.getAttacker()) {
+		} else {
+			while (fighter.getAttacker().getHealth() >= 1 && defender.getAttacker().getHealth() >= 1) {
+				if (fighter.getAttacker().getSpeed() >= defender.getAttacker().getSpeed()) {
+					fighter.getAttacker().attack(defender.getAttacker());
+					if (defender.getAttacker().getHealth() >= 1) {
+						defender.getAttacker().attack(fighter.getAttacker());
+					} else {
+					}
+				} else {
+					defender.getAttacker().attack(fighter.getAttacker());
+					if (fighter.getAttacker().getHealth() >= 1) {
+						fighter.getAttacker().attack(defender.getAttacker());
+					} else {
+					}
+				}
+			}
+			if (defender.getAttacker().getHealth() > fighter.getAttacker().getHealth()) {
+				fighter.addLoss();
+				defender.addWin();
+			} else {
+				fighter.addWin();
+				defender.addLoss();
+			}
+
+			fighter.getAttacker().calcHp();
+			defender.getAttacker().calcHp();
+		}
+	}
 }
