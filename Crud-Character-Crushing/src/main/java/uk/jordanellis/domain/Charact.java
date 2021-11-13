@@ -80,6 +80,7 @@ public class Charact {
 	public void setDex(int dex) {
 		this.dex = dex;
 		calcSpeed();
+		calcDmg();
 	}
 
 	public void calcDmg() {
@@ -97,7 +98,7 @@ public class Charact {
 		this.health -= damage;
 	}
 
-	private void calcSpeed() {
+	public void calcSpeed() {
 		this.speed = (int) (this.dex * 1.5f);
 	}
 
