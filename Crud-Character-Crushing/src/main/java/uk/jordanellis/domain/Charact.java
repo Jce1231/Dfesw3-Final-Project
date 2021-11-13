@@ -80,21 +80,25 @@ public class Charact {
 	public void setDex(int dex) {
 		this.dex = dex;
 		calcSpeed();
+		calcDmg();
 	}
 
 	public void calcDmg() {
 		this.dmg = (int) ((int) ((this.str * 2.5f) + this.dex / 3f) * 1.5f);
 	}
 
-	public void attack() {
-
+	public void attack(Charact target) {
+		if (this.health <= 0) {
+		} else {
+			target.defend(this.dmg, this);
+		}
 	}
 
-	public void defend() {
-
+	public void defend(int damage, Charact target) {
+		this.health -= damage;
 	}
 
-	private void calcSpeed() {
+	public void calcSpeed() {
 		this.speed = (int) (this.dex * 1.5f);
 	}
 

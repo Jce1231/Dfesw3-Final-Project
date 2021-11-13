@@ -65,11 +65,11 @@ public class CharactController {
 			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
+
 //This was used to populate my database with test fighters
-//	@GetMapping("/generate")
-//	public String generateChar() {
-//		this.service.generateCharacters();
-//		return "Characters Generated";
-//
-//	}
+	@PostMapping("/generate/{amount}")
+	public ResponseEntity<List<Charact>> generateChar(@PathVariable int amount) {
+		return new ResponseEntity<List<Charact>>(this.service.generateCharacters(amount), HttpStatus.CREATED);
+
+	}
 }
