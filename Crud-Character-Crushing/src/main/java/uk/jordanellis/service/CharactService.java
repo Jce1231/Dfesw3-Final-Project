@@ -39,8 +39,9 @@ public class CharactService {
 				.orElseThrow(() -> new CharacterNotFoundException("A Character could not be found with ID :" + id)));
 	}
 
-	public Optional<Charact> getChar(Integer id) {
-		return this.repo.findById(id);
+	public Charact getChar(Integer id) {
+		return this.repo.findById(id)
+				.orElseThrow(() -> new CharacterNotFoundException("A Character could not be found with ID :" + id));
 	}
 
 	public List<Charact> getChars() {
@@ -52,8 +53,8 @@ public class CharactService {
 	}
 
 	public CharactDTO createCharact(Charact newCharact) {
-		this.repo.save(newCharact);
-		return this.mapToDto(this.repo.findById(newCharact.getCharactId()).get());
+
+		return this.mapToDto(this.repo.save(newCharact));
 	}
 
 	public CharactDTO updateCharact(Integer id, Charact updatedCharac) {

@@ -2,7 +2,6 @@ package uk.jordanellis.service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
@@ -22,15 +21,18 @@ public class LeaderboardService {
 	@Autowired
 	private CharactService service;
 	private ModelMapper mapper;
+	private int dbSize;
 
 	/**
 	 * @param repo
 	 * @param mapper
 	 */
-	public LeaderboardService(LeaderboardRepo repo, ModelMapper mapper) {
+	public LeaderboardService(LeaderboardRepo repo, ModelMapper mapper, CharactService service) {
 		super();
 		this.repo = repo;
 		this.mapper = mapper;
+		this.service = service;
+		this.dbSize = this.service.getCharacts().size();
 	}
 
 	public LBDto mapToDto(Leaderboard leader) {
@@ -70,10 +72,29 @@ public class LeaderboardService {
 ////		}
 ////		this.repo.saveAll(leaderboard);
 //	}
+	private void checkDb() {
+		if (this.dbSize != this.service.getCharacts().size()) {
+			Charact defender;
+			for (int i = this.dbSize + 1; i <= this.service.getCharacts().size(); i++) {
+				defender = this.service.getChar(i);
+				for (Leaderboard L : this.repo.findAll()) {
+					if (fightt(L.getAttacker(), defender)) {
+						L.addWin();
+						;
+					} else {
+						L.addLoss();
+
+					}
+					this.repo.save(L);
+				}
+			}
+		}
+		this.dbSize = this.service.getCharacts().size();
+	}
 
 	public LBDto fight(int id) {
-		Optional<Charact> optFighter = this.service.getChar(id);
-		Charact fighter = optFighter.get();
+		checkDb();
+		Charact fighter = this.service.getChar(id);
 		if (this.repo.findByAttacker(fighter) != null) {
 			return this.mapToDto(this.repo.findByAttacker(fighter));
 		} else {
@@ -84,33 +105,44 @@ public class LeaderboardService {
 			for (int i = 0; i <= defenders.size() - 1; i++) {
 				if (fighter == defenders.get(i)) {
 				} else {
-					Charact defender = defenders.get(i);
-					while (fighter.getHealth() >= 1 && defender.getHealth() >= 1) {
-						if (fighter.getSpeed() >= defender.getSpeed()) {
-							fighter.attack(defender);
-							if (defender.getHealth() >= 1) {
-								defender.attack(fighter);
-							} else {
-							}
-						} else {
-							defender.attack(fighter);
-							if (fighter.getHealth() >= 1) {
-								fighter.attack(defender);
-							} else {
-							}
-						}
-					}
-					if (defender.getHealth() > fighter.getHealth()) {
-						fighting.addLoss();
-					} else {
+					if (fightt(fighter, defenders.get(i))) {
 						fighting.addWin();
-					}
+					} else {
+						fighting.addLoss();
 
-					fighter.calcHp();
-					defender.calcHp();
+					}
 				}
 			}
 			return this.mapToDto(this.repo.save(fighting));
 		}
+	}
+
+	public boolean fightt(Charact fighter, Charact defender) {
+
+		while (fighter.getHealth() >= 1 && defender.getHealth() >= 1) {
+			if (fighter.getSpeed() >= defender.getSpeed()) {
+				fighter.attack(defender);
+				if (defender.getHealth() >= 1) {
+					defender.attack(fighter);
+				} else {
+				}
+			} else {
+				defender.attack(fighter);
+				if (fighter.getHealth() >= 1) {
+					fighter.attack(defender);
+				} else {
+				}
+			}
+		}
+		if (defender.getHealth() > fighter.getHealth()) {
+			fighter.calcHp();
+			defender.calcHp();
+			return false;
+		} else {
+			fighter.calcHp();
+			defender.calcHp();
+			return true;
+		}
+
 	}
 }
