@@ -52,7 +52,8 @@ public class CharactService {
 	}
 
 	public CharactDTO createCharact(Charact newCharact) {
-		return this.mapToDto(this.repo.save(newCharact));
+		this.repo.save(newCharact);
+		return this.mapToDto(this.repo.findById(newCharact.getCharactId()).get());
 	}
 
 	public CharactDTO updateCharact(Integer id, Charact updatedCharac) {

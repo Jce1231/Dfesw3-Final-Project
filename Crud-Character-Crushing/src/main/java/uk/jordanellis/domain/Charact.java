@@ -58,6 +58,15 @@ public class Charact {
 		this.users = users;
 	}
 
+	public Charact(int charactId, int intel, int str, int dex, int con) {
+		super();
+		this.charactId = charactId;
+		this.setIntel(intel);
+		this.setStr(str);
+		this.setDex(dex);
+		this.setCon(con);
+	}
+
 	public Charact() {
 		super();
 	}

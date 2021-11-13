@@ -48,8 +48,8 @@ public class CharacterIntegrationTest {
 		String requestAsJson = this.mapper.writeValueAsString(requestBody);
 		RequestBuilder request = post("/char/create").contentType(MediaType.APPLICATION_JSON).content(requestAsJson);
 
-		CharactDTO responseBody = modMap.map(new Charact(2, 5, 10, 5, 5, user), CharactDTO.class);
-		System.out.println(responseBody);
+		CharactDTO responseBody = modMap.map(new Charact(2, 5, 10, 5, 5), CharactDTO.class);
+		// Test does not get the User back, so do not send a user into the mapper
 		String responseAsJson = this.mapper.writeValueAsString(responseBody);
 		ResultMatcher checkBody = content().json(responseAsJson);
 		this.mvc.perform(request).andExpect(status().isCreated()).andExpect(checkBody);
