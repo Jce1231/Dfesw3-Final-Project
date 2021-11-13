@@ -10,6 +10,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -24,6 +25,7 @@ import org.springframework.test.web.servlet.ResultMatcher;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import uk.jordanellis.domain.Users;
+import uk.jordanellis.dto.UsersNoCharactDTO;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -35,6 +37,8 @@ public class UserIntegrationTest {
 	private MockMvc mvc;
 	@Autowired
 	private ObjectMapper mapper;
+	@Autowired
+	private ModelMapper modMap;
 
 	@Test
 	void testCreate() throws Exception {
@@ -61,9 +65,9 @@ public class UserIntegrationTest {
 
 	@Test
 	void testGetAll() throws Exception {
-		RequestBuilder request = get("/user/getAll");
+		RequestBuilder request = get("/user/getUsers");
 		Users responseBody = new Users(1, "System Generated");
-		List<Users> users = List.of(responseBody);
+		List<UsersNoCharactDTO> users = List.of(this.modMap.map(responseBody, UsersNoCharactDTO.class));
 		String responseAsJson = this.mapper.writeValueAsString(users);
 
 		ResultMatcher checkStatus = status().isOk();
