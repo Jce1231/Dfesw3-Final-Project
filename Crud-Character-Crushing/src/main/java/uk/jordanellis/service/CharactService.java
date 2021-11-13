@@ -1,5 +1,6 @@
 package uk.jordanellis.service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
@@ -51,9 +52,10 @@ public class CharactService {
 	}
 
 //This was used to generate test fighters for the database, following the stat guideline
-	public void generateCharacters() {
+	public List<Charact> generateCharacters(int amount) {
+		List<Charact> charList = new ArrayList<>();
 		Users systemGen = new Users(1, "System Generated");
-		for (int i = 0; i < 10; i++) {
+		for (int i = 0; i < amount; i++) {
 			Random rand = new Random();
 			Charact c = new Charact();
 			do {
@@ -65,7 +67,9 @@ public class CharactService {
 			} while (!c.checkStats());
 
 			this.createCharact(c);
+			charList.add(c);
 			System.out.println("Done :" + i);
 		}
+		return charList;
 	}
 }

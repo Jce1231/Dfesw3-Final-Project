@@ -6,6 +6,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import uk.jordanellis.domain.Charact;
 import uk.jordanellis.domain.Leaderboard;
 import uk.jordanellis.exceptions.LeaderboardNotFoundException;
 import uk.jordanellis.repo.LeaderboardRepo;
@@ -34,58 +35,70 @@ public class LeaderboardService {
 		return this.repo.findAll();
 	}
 
-	public void initialise() {
-		this.service.getCharacts().forEach(n -> this.repo.save(new Leaderboard(n, 0, 0)));
+	public Leaderboard getByCharact(Charact charac) {
+		return this.repo.findByAttacker(charac);
 	}
 
-	public void fightLoop() {
+//	public void fightLoop() {
+//		
+//
+////		ArrayList<Leaderboard> leaderboard = new ArrayList<>();
+////		leaderboard = (ArrayList<Leaderboard>) this.repo.findAll();
+////		for (int i = 0; i <= leaderboard.size() - 1; i++) {
+////			Leaderboard fighter = leaderboard.get(i);
+////			for (int j = i; j <= leaderboard.size() - 1; j++) {
+////				if (i != j) {
+////					Leaderboard defender = leaderboard.get(j);
+////					fight(fighter, defender);
+////					System.out.println("Loop I: " + i + " Loop J: " + j);
+////					leaderboard.set(j, defender);
+////
+////				}
+////			}
+////			leaderboard.set(i, fighter);
+////		}
+////		this.repo.saveAll(leaderboard);
+//	}
 
-		ArrayList<Leaderboard> leaderboard = new ArrayList<>();
-		leaderboard = (ArrayList<Leaderboard>) this.repo.findAll();
-		for (int i = 0; i <= leaderboard.size() - 1; i++) {
-			Leaderboard fighter = leaderboard.get(i);
-			for (int j = i; j <= leaderboard.size() - 1; j++) {
-				if (i != j) {
-					Leaderboard defender = leaderboard.get(j);
-					fight(fighter, defender);
-					System.out.println("Loop I: " + i + " Loop J: " + j);
-					leaderboard.set(j, defender);
-
-				}
-			}
-			leaderboard.set(i, fighter);
-		}
-		this.repo.saveAll(leaderboard);
-	}
-
-	public void fight(Leaderboard fighter, Leaderboard defender) {
-		if (fighter.getAttacker() == defender.getAttacker()) {
+	public Leaderboard fight(int id) {
+		Charact fighter = this.service.getCharact(id);
+		if (this.repo.findByAttacker(fighter) != null) {
+			return this.repo.findByAttacker(fighter);
 		} else {
-			while (fighter.getAttacker().getHealth() >= 1 && defender.getAttacker().getHealth() >= 1) {
-				if (fighter.getAttacker().getSpeed() >= defender.getAttacker().getSpeed()) {
-					fighter.getAttacker().attack(defender.getAttacker());
-					if (defender.getAttacker().getHealth() >= 1) {
-						defender.getAttacker().attack(fighter.getAttacker());
-					} else {
-					}
+			Leaderboard fighting = new Leaderboard(fighter, 0, 0);
+			List<Charact> defenders = new ArrayList<>();
+			defenders.addAll(this.service.getCharacts());
+			System.out.println(defenders.size());
+			for (int i = 0; i <= defenders.size() - 1; i++) {
+				if (fighter == defenders.get(i)) {
 				} else {
-					defender.getAttacker().attack(fighter.getAttacker());
-					if (fighter.getAttacker().getHealth() >= 1) {
-						fighter.getAttacker().attack(defender.getAttacker());
-					} else {
+					Charact defender = defenders.get(i);
+					while (fighter.getHealth() >= 1 && defender.getHealth() >= 1) {
+						if (fighter.getSpeed() >= defender.getSpeed()) {
+							fighter.attack(defender);
+							if (defender.getHealth() >= 1) {
+								defender.attack(fighter);
+							} else {
+							}
+						} else {
+							defender.attack(fighter);
+							if (fighter.getHealth() >= 1) {
+								fighter.attack(defender);
+							} else {
+							}
+						}
 					}
+					if (defender.getHealth() > fighter.getHealth()) {
+						fighting.addLoss();
+					} else {
+						fighting.addWin();
+					}
+
+					fighter.calcHp();
+					defender.calcHp();
 				}
 			}
-			if (defender.getAttacker().getHealth() > fighter.getAttacker().getHealth()) {
-				fighter.addLoss();
-				defender.addWin();
-			} else {
-				fighter.addWin();
-				defender.addLoss();
-			}
-
-			fighter.getAttacker().calcHp();
-			defender.getAttacker().calcHp();
+			return this.repo.save(fighting);
 		}
 	}
 }
