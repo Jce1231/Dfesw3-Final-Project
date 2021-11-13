@@ -2,12 +2,16 @@ package uk.jordanellis.service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.Random;
+import java.util.stream.Collectors;
 
+import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
 import uk.jordanellis.domain.Charact;
 import uk.jordanellis.domain.Users;
+import uk.jordanellis.dto.CharactDTO;
 import uk.jordanellis.exceptions.CharacterNotFoundException;
 import uk.jordanellis.repo.CharactRepo;
 
@@ -15,35 +19,50 @@ import uk.jordanellis.repo.CharactRepo;
 public class CharactService {
 
 	private CharactRepo repo;
+	private ModelMapper mapper;
 
 	/**
 	 * @param repo
 	 */
-	public CharactService(CharactRepo repo) {
+	public CharactService(CharactRepo repo, ModelMapper mapper) {
 		super();
 		this.repo = repo;
+		this.mapper = mapper;
 	}
 
-	public Charact getCharact(Integer id) {
-		return this.repo.findById(id)
-				.orElseThrow(() -> new CharacterNotFoundException("A Character could not be found with ID :" + id));
+	public CharactDTO mapToDto(Charact charact) {
+		return this.mapper.map(charact, CharactDTO.class);
 	}
 
-	public List<Charact> getCharacts() {
+	public CharactDTO getCharact(Integer id) {
+		return this.mapToDto(this.repo.findById(id)
+				.orElseThrow(() -> new CharacterNotFoundException("A Character could not be found with ID :" + id)));
+	}
+
+	public Optional<Charact> getChar(Integer id) {
+		return this.repo.findById(id);
+	}
+
+	public List<Charact> getChars() {
 		return this.repo.findAll();
 	}
 
-	public Charact createCharact(Charact newCharact) {
-		return this.repo.save(newCharact);
+	public List<CharactDTO> getCharacts() {
+		return this.repo.findAll().stream().map(this::mapToDto).collect(Collectors.toList());
 	}
 
-	public Charact updateCharact(Integer id, Charact updatedCharac) {
-		Charact curChar = this.getCharact(id);
+	public CharactDTO createCharact(Charact newCharact) {
+		return this.mapToDto(this.repo.save(newCharact));
+	}
+
+	public CharactDTO updateCharact(Integer id, Charact updatedCharac) {
+		Optional<Charact> optChar = this.repo.findById(id);
+		Charact curChar = optChar.get();
 		curChar.setCon(updatedCharac.getCon());
 		curChar.setDex(updatedCharac.getDex());
 		curChar.setIntel(updatedCharac.getIntel());
 		curChar.setStr(updatedCharac.getStr());
-		return this.repo.save(curChar);
+		return this.mapToDto(this.repo.save(curChar));
 	}
 
 	public boolean deleteCharact(Integer id) {
@@ -52,8 +71,8 @@ public class CharactService {
 	}
 
 //This was used to generate test fighters for the database, following the stat guideline
-	public List<Charact> generateCharacters(int amount) {
-		List<Charact> charList = new ArrayList<>();
+	public List<CharactDTO> generateCharacters(int amount) {
+		List<CharactDTO> charList = new ArrayList<>();
 		Users systemGen = new Users(1, "System Generated");
 		for (int i = 0; i < amount; i++) {
 			Random rand = new Random();
@@ -67,7 +86,7 @@ public class CharactService {
 			} while (!c.checkStats());
 
 			this.createCharact(c);
-			charList.add(c);
+			charList.add(this.mapToDto(c));
 			System.out.println("Done :" + i);
 		}
 		return charList;

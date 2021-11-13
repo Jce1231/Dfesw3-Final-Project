@@ -2,12 +2,16 @@ package uk.jordanellis.service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import uk.jordanellis.domain.Charact;
 import uk.jordanellis.domain.Leaderboard;
+import uk.jordanellis.dto.LBDto;
 import uk.jordanellis.exceptions.LeaderboardNotFoundException;
 import uk.jordanellis.repo.LeaderboardRepo;
 
@@ -17,26 +21,33 @@ public class LeaderboardService {
 	private LeaderboardRepo repo;
 	@Autowired
 	private CharactService service;
+	private ModelMapper mapper;
 
 	/**
 	 * @param repo
+	 * @param mapper
 	 */
-	public LeaderboardService(LeaderboardRepo repo) {
+	public LeaderboardService(LeaderboardRepo repo, ModelMapper mapper) {
 		super();
 		this.repo = repo;
+		this.mapper = mapper;
 	}
 
-	public Leaderboard getLeader(Integer id) {
-		return this.repo.findById(id).orElseThrow(
-				() -> new LeaderboardNotFoundException("A leaderboard entry could not be found with ID :" + id));
+	public LBDto mapToDto(Leaderboard leader) {
+		return this.mapper.map(leader, LBDto.class);
 	}
 
-	public List<Leaderboard> getAllLeaders() {
-		return this.repo.findAll();
+	public LBDto getLeader(Integer id) {
+		return this.mapToDto(this.repo.findById(id).orElseThrow(
+				() -> new LeaderboardNotFoundException("A leaderboard entry could not be found with ID :" + id)));
 	}
 
-	public Leaderboard getByCharact(Charact charac) {
-		return this.repo.findByAttacker(charac);
+	public List<LBDto> getAllLeaders() {
+		return this.repo.findAll().stream().map(this::mapToDto).collect(Collectors.toList());
+	}
+
+	public LBDto getByCharact(Charact charac) {
+		return this.mapToDto(this.repo.findByAttacker(charac));
 	}
 
 //	public void fightLoop() {
@@ -60,14 +71,15 @@ public class LeaderboardService {
 ////		this.repo.saveAll(leaderboard);
 //	}
 
-	public Leaderboard fight(int id) {
-		Charact fighter = this.service.getCharact(id);
+	public LBDto fight(int id) {
+		Optional<Charact> optFighter = this.service.getChar(id);
+		Charact fighter = optFighter.get();
 		if (this.repo.findByAttacker(fighter) != null) {
-			return this.repo.findByAttacker(fighter);
+			return this.mapToDto(this.repo.findByAttacker(fighter));
 		} else {
 			Leaderboard fighting = new Leaderboard(fighter, 0, 0);
 			List<Charact> defenders = new ArrayList<>();
-			defenders.addAll(this.service.getCharacts());
+			defenders.addAll(this.service.getChars());
 			System.out.println(defenders.size());
 			for (int i = 0; i <= defenders.size() - 1; i++) {
 				if (fighter == defenders.get(i)) {
@@ -98,7 +110,7 @@ public class LeaderboardService {
 					defender.calcHp();
 				}
 			}
-			return this.repo.save(fighting);
+			return this.mapToDto(this.repo.save(fighting));
 		}
 	}
 }

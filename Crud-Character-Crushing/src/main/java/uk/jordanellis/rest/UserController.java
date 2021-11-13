@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import uk.jordanellis.domain.Users;
+import uk.jordanellis.dto.UsersDTO;
+import uk.jordanellis.dto.UsersNoCharactDTO;
 import uk.jordanellis.service.UserService;
 
 @RestController
@@ -30,25 +32,30 @@ public class UserController {
 	};
 
 	@GetMapping("/get/{id}")
-	public Users getUser(@PathVariable Integer id) {
+	public UsersDTO getUser(@PathVariable Integer id) {
 		return this.service.getUser(id);
 	}
 
-	@GetMapping("/getAll")
-	public List<Users> getUsers() {
+	@GetMapping("/getUsers")
+	public List<UsersNoCharactDTO> getUsers() {
 		return this.service.getUsers();
 	}
 
+	@GetMapping("/getUserChar")
+	public List<UsersDTO> getUserChar() {
+		return this.service.getAllUserChar();
+	}
+
 	@PostMapping("/create")
-	public ResponseEntity<Users> createUser(@RequestBody Users newUser) {
-		Users responseBody = this.service.createUsers(newUser);
-		return new ResponseEntity<Users>(responseBody, HttpStatus.CREATED);
+	public ResponseEntity<UsersDTO> createUser(@RequestBody Users newUser) {
+		UsersDTO responseBody = this.service.createUsers(newUser);
+		return new ResponseEntity<UsersDTO>(responseBody, HttpStatus.CREATED);
 	}
 
 	@PutMapping("/update/{id}")
-	public ResponseEntity<Users> updateUser(@PathVariable Integer id, @RequestBody Users updatedUser) {
-		Users responseBody = this.service.updateUsers(id, updatedUser);
-		return new ResponseEntity<Users>(responseBody, HttpStatus.ACCEPTED);
+	public ResponseEntity<UsersDTO> updateUser(@PathVariable Integer id, @RequestBody Users updatedUser) {
+		UsersDTO responseBody = this.service.updateUsers(id, updatedUser);
+		return new ResponseEntity<UsersDTO>(responseBody, HttpStatus.ACCEPTED);
 	}
 
 	@DeleteMapping("/delete/{id}")

@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import uk.jordanellis.domain.Leaderboard;
+import uk.jordanellis.dto.LBDto;
 import uk.jordanellis.service.LeaderboardService;
 
 @RestController
@@ -21,12 +21,12 @@ public class leaderBController {
 	}
 
 	@GetMapping("/getAll")
-	public List<Leaderboard> getAllLeaders() {
+	public List<LBDto> getAllLeaders() {
 		return this.service.getAllLeaders();
 	}
 
 	@GetMapping("/getByChar/{id}")
-	public Leaderboard getOne(@PathVariable int id) {
+	public LBDto getOne(@PathVariable int id) {
 		return this.service.fight(id);
 	}
 }

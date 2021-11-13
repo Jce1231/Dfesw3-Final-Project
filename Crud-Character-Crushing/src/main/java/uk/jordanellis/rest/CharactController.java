@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import uk.jordanellis.domain.Charact;
+import uk.jordanellis.dto.CharactDTO;
 import uk.jordanellis.service.CharactService;
 
 @RestController
@@ -30,19 +31,19 @@ public class CharactController {
 	}
 
 	@GetMapping("/get/{id}")
-	public Charact getChar(@PathVariable Integer id) {
+	public CharactDTO getChar(@PathVariable Integer id) {
 		return this.service.getCharact(id);
 	}
 
 	@GetMapping("/getAll")
-	public List<Charact> getChars() {
+	public List<CharactDTO> getChars() {
 		return this.service.getCharacts();
 	}
 
 	@PostMapping("/create")
-	public ResponseEntity<Charact> createChar(@RequestBody Charact newCharact) {
-		Charact responseBody = this.service.createCharact(newCharact);
-		return new ResponseEntity<Charact>(responseBody, HttpStatus.CREATED);
+	public ResponseEntity<CharactDTO> createChar(@RequestBody Charact newCharact) {
+		CharactDTO responseBody = this.service.createCharact(newCharact);
+		return new ResponseEntity<CharactDTO>(responseBody, HttpStatus.CREATED);
 	}
 
 	@GetMapping("/test")
@@ -51,9 +52,9 @@ public class CharactController {
 	}
 
 	@PutMapping("/update/{id}")
-	public ResponseEntity<Charact> updateChar(@PathVariable Integer id, @RequestBody Charact updatedChar) {
-		Charact responseBody = this.service.updateCharact(id, updatedChar);
-		return new ResponseEntity<Charact>(responseBody, HttpStatus.ACCEPTED);
+	public ResponseEntity<CharactDTO> updateChar(@PathVariable Integer id, @RequestBody Charact updatedChar) {
+		CharactDTO responseBody = this.service.updateCharact(id, updatedChar);
+		return new ResponseEntity<CharactDTO>(responseBody, HttpStatus.ACCEPTED);
 	}
 
 	@DeleteMapping("/delete/{id}")
@@ -68,8 +69,8 @@ public class CharactController {
 
 //This was used to populate my database with test fighters
 	@PostMapping("/generate/{amount}")
-	public ResponseEntity<List<Charact>> generateChar(@PathVariable int amount) {
-		return new ResponseEntity<List<Charact>>(this.service.generateCharacters(amount), HttpStatus.CREATED);
+	public ResponseEntity<List<CharactDTO>> generateChar(@PathVariable int amount) {
+		return new ResponseEntity<List<CharactDTO>>(this.service.generateCharacters(amount), HttpStatus.CREATED);
 
 	}
 }

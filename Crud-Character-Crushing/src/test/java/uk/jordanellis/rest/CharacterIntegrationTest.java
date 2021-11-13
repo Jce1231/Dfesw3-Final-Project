@@ -10,6 +10,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -25,6 +26,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import uk.jordanellis.domain.Charact;
 import uk.jordanellis.domain.Users;
+import uk.jordanellis.dto.CharactDTO;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -36,15 +38,18 @@ public class CharacterIntegrationTest {
 	private MockMvc mvc;
 	@Autowired
 	private ObjectMapper mapper;
+	@Autowired
+	private ModelMapper modMap;
 
 	@Test
 	void testCreate() throws Exception {
-		Users user = new Users(2, "Jordan");
+		Users user = new Users(1, "System Generated");
 		Charact requestBody = new Charact(5, 10, 5, 5, user);
 		String requestAsJson = this.mapper.writeValueAsString(requestBody);
 		RequestBuilder request = post("/char/create").contentType(MediaType.APPLICATION_JSON).content(requestAsJson);
 
-		Charact responseBody = new Charact(2, 5, 10, 5, 5, user);
+		CharactDTO responseBody = modMap.map(new Charact(2, 5, 10, 5, 5, user), CharactDTO.class);
+		System.out.println(responseBody);
 		String responseAsJson = this.mapper.writeValueAsString(responseBody);
 		ResultMatcher checkBody = content().json(responseAsJson);
 		this.mvc.perform(request).andExpect(status().isCreated()).andExpect(checkBody);
@@ -54,7 +59,7 @@ public class CharacterIntegrationTest {
 	void testGet() throws Exception {
 		Users user = new Users(1, "System Generated");
 		RequestBuilder request = get("/char/get/1");
-		Charact responseBody = new Charact(1, 5, 5, 10, 5, user);
+		CharactDTO responseBody = modMap.map(new Charact(1, 5, 5, 10, 5, user), CharactDTO.class);
 		String responseAsJson = this.mapper.writeValueAsString(responseBody);
 
 		ResultMatcher checkStatus = status().isOk();
@@ -66,8 +71,8 @@ public class CharacterIntegrationTest {
 	void testGetAll() throws Exception {
 		RequestBuilder request = get("/char/getAll");
 		Users user = new Users(1, "System Generated");
-		Charact responseBody = new Charact(1, 5, 5, 10, 5, user);
-		List<Charact> characts = List.of(responseBody);
+		CharactDTO responseBody = modMap.map(new Charact(1, 5, 5, 10, 5, user), CharactDTO.class);
+		List<CharactDTO> characts = List.of(responseBody);
 		String responseAsJson = this.mapper.writeValueAsString(characts);
 
 		ResultMatcher checkStatus = status().isOk();
@@ -82,7 +87,7 @@ public class CharacterIntegrationTest {
 		Charact requestBody = new Charact(10, 5, 5, 5, user);
 		String requestAsJson = this.mapper.writeValueAsString(requestBody);
 		RequestBuilder request = put("/char/update/1").contentType(MediaType.APPLICATION_JSON).content(requestAsJson);
-		Charact responseBody = new Charact(1, 10, 5, 5, 5, user);
+		CharactDTO responseBody = modMap.map(new Charact(1, 10, 5, 5, 5, user), CharactDTO.class);
 		String responseAsJSON = this.mapper.writeValueAsString(responseBody);
 
 		ResultMatcher checkStatus = status().isAccepted();
