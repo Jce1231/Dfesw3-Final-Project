@@ -1,3 +1,5 @@
-insert into leaderboard 
+insert into 
+leaderboard 
 (charact_id, losses, wins) 
-values (1, 0, 0)
+values 
+(1, 0, 0);

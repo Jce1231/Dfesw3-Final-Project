@@ -48,7 +48,7 @@ public class CharacterIntegrationTest {
 		String requestAsJson = this.mapper.writeValueAsString(requestBody);
 		RequestBuilder request = post("/char/create").contentType(MediaType.APPLICATION_JSON).content(requestAsJson);
 
-		CharactDTO responseBody = modMap.map(new Charact(2, 5, 10, 5, 5), CharactDTO.class);
+		CharactDTO responseBody = modMap.map(new Charact(3, 5, 10, 5, 5), CharactDTO.class);
 		// Test does not get the User back, so do not send a user into the mapper
 		String responseAsJson = this.mapper.writeValueAsString(responseBody);
 		ResultMatcher checkBody = content().json(responseAsJson);
@@ -71,8 +71,10 @@ public class CharacterIntegrationTest {
 	void testGetAll() throws Exception {
 		RequestBuilder request = get("/char/getAll");
 		Users user = new Users(1, "System Generated");
-		CharactDTO responseBody = modMap.map(new Charact(1, 5, 5, 10, 5, user), CharactDTO.class);
-		List<CharactDTO> characts = List.of(responseBody);
+		Charact char1 = new Charact(1, 5, 5, 10, 5, user);
+		Charact char2 = new Charact(2, 5, 5, 10, 5, user);
+
+		List<CharactDTO> characts = List.of(modMap.map(char1, CharactDTO.class), modMap.map(char2, CharactDTO.class));
 		String responseAsJson = this.mapper.writeValueAsString(characts);
 
 		ResultMatcher checkStatus = status().isOk();
