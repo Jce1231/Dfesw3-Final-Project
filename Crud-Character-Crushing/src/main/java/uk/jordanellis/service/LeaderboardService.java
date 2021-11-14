@@ -96,7 +96,7 @@ public class LeaderboardService {
 		checkDb();
 		Charact fighter = this.service.getChar(id);
 		if (this.repo.findByAttacker(fighter) != null) {
-			return this.mapToDto(this.repo.findByAttacker(fighter));
+			return getByCharact(fighter);
 		} else {
 			Leaderboard fighting = new Leaderboard(fighter, 0, 0);
 			List<Charact> defenders = new ArrayList<>();

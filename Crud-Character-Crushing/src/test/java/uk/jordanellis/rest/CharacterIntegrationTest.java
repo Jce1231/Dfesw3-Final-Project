@@ -1,14 +1,17 @@
 package uk.jordanellis.rest;
 
+import static org.hamcrest.Matchers.hasSize;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.util.List;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,9 +43,17 @@ public class CharacterIntegrationTest {
 	private ObjectMapper mapper;
 	@Autowired
 	private ModelMapper modMap;
+	private Charact newCharact;
+
+	@BeforeEach
+	void setup() {
+		Users user = new Users(1, "System Generated");
+		newCharact = new Charact(1, 5, 6, 9, 5, user);
+	}
 
 	@Test
 	void testCreate() throws Exception {
+
 		Users user = new Users(1, "System Generated");
 		Charact requestBody = new Charact(5, 10, 5, 5, user);
 		String requestAsJson = this.mapper.writeValueAsString(requestBody);
@@ -57,9 +68,10 @@ public class CharacterIntegrationTest {
 
 	@Test
 	void testGet() throws Exception {
-		Users user = new Users(1, "System Generated");
 		RequestBuilder request = get("/char/get/1");
-		CharactDTO responseBody = modMap.map(new Charact(1, 5, 5, 10, 5, user), CharactDTO.class);
+		CharactDTO responseBody = modMap.map(newCharact, CharactDTO.class);
+		// ID, Intel , Str, Dex, Con, USER
+		// 1, 5, 5, 10, 5, USER
 		String responseAsJson = this.mapper.writeValueAsString(responseBody);
 
 		ResultMatcher checkStatus = status().isOk();
@@ -71,8 +83,8 @@ public class CharacterIntegrationTest {
 	void testGetAll() throws Exception {
 		RequestBuilder request = get("/char/getAll");
 		Users user = new Users(1, "System Generated");
-		Charact char1 = new Charact(1, 5, 5, 10, 5, user);
-		Charact char2 = new Charact(2, 5, 5, 10, 5, user);
+		Charact char1 = new Charact(1, 5, 6, 9, 5, user);
+		Charact char2 = new Charact(2, 5, 6, 9, 5, user);
 
 		List<CharactDTO> characts = List.of(modMap.map(char1, CharactDTO.class), modMap.map(char2, CharactDTO.class));
 		String responseAsJson = this.mapper.writeValueAsString(characts);
@@ -110,6 +122,13 @@ public class CharacterIntegrationTest {
 		RequestBuilder request = delete("/char/delete/0");
 		ResultMatcher checkStatus = status().isInternalServerError();
 		this.mvc.perform(request).andExpect(checkStatus);
+	}
+
+	@Test
+	void testGenerate10() throws Exception {
+		RequestBuilder request = post("/char/generate/10");
+		ResultMatcher checkStatus = status().isCreated();
+		this.mvc.perform(request).andExpect(checkStatus).andExpect(jsonPath("$", hasSize(10)));
 	}
 
 }

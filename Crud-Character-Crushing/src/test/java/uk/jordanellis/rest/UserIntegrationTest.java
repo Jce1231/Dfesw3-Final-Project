@@ -25,6 +25,7 @@ import org.springframework.test.web.servlet.ResultMatcher;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import uk.jordanellis.domain.Users;
+import uk.jordanellis.dto.UsersDTO;
 import uk.jordanellis.dto.UsersNoCharactDTO;
 
 @SpringBootTest
@@ -102,6 +103,19 @@ public class UserIntegrationTest {
 		RequestBuilder request = delete("/user/delete/0");
 		ResultMatcher checkStatus = status().isInternalServerError();
 		this.mvc.perform(request).andExpect(checkStatus);
+	}
+
+	@Test
+	void getUserChar() throws Exception {
+		RequestBuilder request = get("/user/getUserChar");
+		Users responseBody = new Users(1, "System Generated");
+		List<UsersDTO> users = List.of(this.modMap.map(responseBody, UsersDTO.class));
+		String responseAsJson = this.mapper.writeValueAsString(users);
+
+		ResultMatcher checkStatus = status().isOk();
+		ResultMatcher checkBody = content().json(responseAsJson);
+		System.out.println(this.mvc.perform(request));
+		this.mvc.perform(request).andExpect(checkStatus).andExpect(checkBody);
 	}
 
 }

@@ -46,11 +46,6 @@ public class CharactController {
 		return new ResponseEntity<CharactDTO>(responseBody, HttpStatus.CREATED);
 	}
 
-	@GetMapping("/test")
-	public String test() {
-		return "Hello";
-	}
-
 	@PutMapping("/update/{id}")
 	public ResponseEntity<CharactDTO> updateChar(@PathVariable Integer id, @RequestBody Charact updatedChar) {
 		CharactDTO responseBody = this.service.updateCharact(id, updatedChar);
