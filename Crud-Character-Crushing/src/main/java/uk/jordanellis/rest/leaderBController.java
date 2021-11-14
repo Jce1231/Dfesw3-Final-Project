@@ -25,6 +25,11 @@ public class leaderBController {
 		return this.service.getAllLeaders();
 	}
 
+	@GetMapping("/get/{id}")
+	public LBDto getById(@PathVariable int id) {
+		return this.service.getLeader(id);
+	}
+
 	@GetMapping("/getByChar/{id}")
 	public LBDto getOne(@PathVariable int id) {
 		return this.service.fight(id);

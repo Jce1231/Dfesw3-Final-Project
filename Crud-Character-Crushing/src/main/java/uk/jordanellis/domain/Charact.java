@@ -93,7 +93,8 @@ public class Charact {
 	}
 
 	public void calcDmg() {
-		this.dmg = (int) ((int) ((this.str * 2.5f) + this.dex / 3f) * 1.5f);
+		this.dmg = (int) (Math.floor(((this.str * 2.5f) + this.dex / 3f) * 1.5f));
+		System.out.println(this.dmg);
 	}
 
 	public void attack(Charact target) {
@@ -118,14 +119,4 @@ public class Charact {
 			return true;
 		}
 	}
-
-	/**
-	 * @param charactId
-	 * @param intel
-	 * @param str
-	 * @param dex
-	 * @param con
-	 * @param users
-	 */
-
 }

@@ -46,4 +46,12 @@ public class Leaderboard {
 		this.wins = wins;
 		this.losses = losses;
 	}
+
+	public Leaderboard(Charact attacker, int wins, int losses, int id) {
+		super();
+		this.attacker = attacker;
+		this.wins = wins;
+		this.losses = losses;
+		this.lbID = id;
+	}
 }
