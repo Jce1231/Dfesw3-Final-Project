@@ -94,7 +94,6 @@ public class Charact {
 
 	public void calcDmg() {
 		this.dmg = (int) (Math.floor(((this.str * 2.5f) + this.dex / 3f) * 1.5f));
-		System.out.println(this.dmg);
 	}
 
 	public void attack(Charact target) {
